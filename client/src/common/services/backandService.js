@@ -1,0 +1,42 @@
+(function () {
+  'use strict';
+
+  function backandService($http, Backand) {
+
+    var factory = {};
+    
+    $http.defaults.headers.common.AnonymousToken = "80e4b335-3925-4c6e-b5cc-c2a9bf271215";
+
+    factory.listOfObjects = function() {
+      return $http({
+        method: 'GET',
+        url: Backand.getApiUrl() + '/1/table/config',
+        params: {
+          pageSize: 200,
+          pageNumber: 1,
+          filter: '[{fieldName:"SystemView", operator:"equals", value: false}]',
+          sort: '[{fieldName:"captionText", order:"asc"}]'
+        }
+      });
+    };
+
+    factory.objectData = function(name, pageSize, pageNumber, sort, filter) {
+      return $http({
+        method: 'GET',
+        url: Backand.getApiUrl() + '/1/objects/' + name,
+        params: {
+          pageSize: pageSize || 5,
+          pageNumber: pageNumber || 1,
+          filter: filter || '',
+          sort: sort || ''
+        }
+      });
+    };
+
+    return factory;
+
+  }
+
+  angular.module('common.services.backand',[])
+    .factory('BackandService', ['$http','Backand', backandService]);
+})();
